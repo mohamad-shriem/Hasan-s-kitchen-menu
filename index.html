@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasan's Kitchen Digital Menu</title>
+    <!-- Load Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar styling for a cleaner look */
+        ::-webkit-scrollbar {
+            height: 8px; /* For horizontal scrollbar on nav */
+            width: 8px; /* For vertical scrollbar on body */
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937; /* Dark gray track */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #fcd34d; /* Amber/Gold thumb */
+            border-radius: 4px;
+        }
+        
+        /* Smooth scrolling for menu links */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Base styling for dark theme and typography */
+        body {
+            background-color: #111827; /* Dark background */
+            color: #f9fafb; /* Light text */
+            /* Increased padding-top to accommodate larger header */
+            padding-top: 140px; 
+        }
+
+        /* Fixed Header and Navigation Bar */
+        #fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+        }
+
+        /* Compact Navigation Bar: Always a horizontal scrolling list */
+        #sidebar-nav {
+            overflow-x: auto; /* Allows horizontal scrolling */
+            white-space: nowrap; /* Prevents wrapping */
+            border-bottom: 2px solid #fcd34d; /* Gold border separates it from content */
+            padding: 6px 16px; /* Reduced vertical padding */
+        }
+        #sidebar-nav ul {
+            display: flex; 
+            justify-content: center; 
+            max-width: 7xl;
+            margin: 0 auto; 
+            padding: 0;
+            list-style: none; 
+            width: fit-content; 
+        }
+        #sidebar-nav a {
+            display: inline-block;
+            padding: 4px 10px; /* Further reduced button size */
+            margin-right: 6px;
+            font-size: 0.8rem; /* text-xs */
+            flex-shrink: 0; 
+        }
+
+        /* Desktop Adjustment: Increased body padding for larger header */
+        @media (min-width: 1024px) {
+            body {
+                padding-top: 135px; /* Slightly less padding on larger screens */
+            }
+        }
+        
+        /* Custom Styles for View Toggle Icons (using inline SVG paths) */
+        .view-icon {
+            width: 20px; /* Slightly smaller icons */
+            height: 20px;
+            transition: all 0.2s;
+        }
+        .view-button.active {
+            background-color: #b45309; 
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Header layout */
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        /* Logo positioning - absolutely positioned on the left */
+        .header-logo {
+            position: absolute;
+            left: -2%;
+            top: 70%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        
+        /* Center content - title and subtitle */
+        .header-center {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0 5rem; /* Add padding to prevent overlap with logo */
+        }
+        
+        /* View toggle positioning */
+        .header-controls {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Fixed Header and Navigation Section -->
+    <div id="fixed-header" class="bg-gray-900 shadow-xl">
+        <!-- Main Header/Title and View Toggle -->
+        <header class="py-4 px-4 max-w-7xl mx-auto relative header-container">
+            
+            <!-- Large Logo on the Left (Absolutely Positioned) -->
+            <div class="header-logo">
+                <img src="src/Logo.png" alt="Hasan's Kitchen Logo" class="object-contain" width="150" height="150">
+            </div>
+            
+            <!-- Centered Title and Subtitle -->
+            <div class="header-center">
+                <!-- Large centered title -->
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-widest text-amber-400 uppercase">
+                    Hasan's Kitchen
+                </h1>
+                <!-- Centered subtitle -->
+                <p class="text-gray-400 text-base sm:text-lg italic mt-1">
+                    Every Bite Tells a Story - كل لقمة تحكي قصة
+                </p>
+            </div>
+            
+            <!-- View Toggle Controls (Right Side) -->
+            <div class="header-controls">
+                <div class="flex space-x-2">
+                    <button id="grid-view-btn" onclick="toggleView('grid')" class="view-button active bg-amber-600 text-white p-1.5 rounded-lg shadow-md hover:bg-amber-700 transition duration-150" aria-label="Grid View">
+                        <!-- Grid Icon SVG -->
+                        <svg class="view-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M4 4h7v7H4V4zM4 13h7v7H4v-7zM13 4h7v7h-7V4zM13 13h7v7h-7v-7z"/>
+                        </svg>
+                    </button>
+                    <button id="list-view-btn" onclick="toggleView('list')" class="view-button bg-gray-700 text-gray-300 p-1.5 rounded-lg shadow-md hover:bg-gray-600 transition duration-150" aria-label="List View">
+                        <!-- List Icon SVG -->
+                        <svg class="view-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Fixed Navigation Buttons (Always compact and horizontally scrollable) -->
+        <nav id="sidebar-nav" class="bg-gray-800 lg:bg-gray-900">
+            <ul class="space-x-2">
+                <li><a href="#appetizers" class="rounded-full text-gray-300 hover:bg-amber-700 hover:text-white transition duration-200">Appetizers | مقبلات</a></li>
+                <li><a href="#sandwiches" class="rounded-full text-gray-300 hover:bg-amber-700 hover:text-white transition duration-200">Sandwiches | سندويشات</a></li>
+                <li><a href="#burgers" class="rounded-full text-gray-300 hover:bg-amber-700 hover:text-white transition duration-200">Burgers | برغر</a></li>
+                <li><a href="#plates" class="rounded-full text-gray-300 hover:bg-amber-700 hover:text-white transition duration-200">Plates | أطباق</a></li>
+                <li><a href="#arabic" class="rounded-full text-gray-300 hover:bg-amber-700 hover:text-white transition duration-200">Arabic Specialties | أصناف عربية</a></li>
+                <li><a href="#desserts" class="rounded-full text-gray-300 hover:bg-amber-700 hover:text-white transition duration-200">Desserts | حلويات</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto p-4 lg:p-8">
+
+        <!-- Menu Items Content Container -->
+        <section class="space-y-12" id="menu-content">
+            <!-- Content will be rendered here by JavaScript -->
+        </section>
+
+    </main>
+    
+    <!-- Footer/Contact Section -->
+    <footer class="bg-gray-900 mt-10 p-6 text-center text-gray-500">
+        <div class="flex justify-center mb-3">
+            <svg class="w-12 h-12 text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18 10H6c-1.1 0-2 .9-2 2v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3c0-1.1-.9-2-2-2z"/>
+                <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 6h6"/>
+                <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10.5 3h3"/>
+            </svg>
+        </div>
+        <p class="text-lg font-semibold text-white mb-2">Hasan's Kitchen | مطبخ حسن</p>
+        <p class="text-amber-400 mb-2">Contact for Wholesale & Special Occasion Orders: | للتواصل لطلبات الجملة والمناسبات الخاصة:</p>
+        <p class="text-white text-xl font-mono tracking-wider">71-200583 / 71-200583</p>
+        <p class="text-sm mt-4">Thank you for dining with us. | شكراً لزيارتكم.</p>
+    </footer>
+
+    <!-- Script Block for Logic and Rendering -->
+    <script>
+        let currentView = 'grid'; // Default view state
+
+        // --- Data Definitions (Same as before) ---
+
+        const menuData = [
+            // Category: Appetizers
+            { id: 1, category: 'appetizers', nameEn: 'Fries & Cheddar', nameAr: 'بطاطا وجبنة شيدر', descEn: 'Fries, cheddar, BBQ, and Mejo-chips.', descAr: 'بطاطا، شيدر، باربكيو، وشيبس ميجو.', price: '4$', imageUrl: 'https://placehold.co/112x112/583707/FFF?text=FRIES' },
+            { id: 2, category: 'appetizers', nameEn: 'Classic Fries Plate', nameAr: 'طبق بطاطا كلاسيكي', descEn: 'Classic crispy fries.', descAr: 'بطاطا مقلية كلاسيكية.', price: '3.5$', imageUrl: 'https://placehold.co/112x112/583707/FFF?text=FRIES' },
+            { id: 3, category: 'appetizers', nameEn: 'Special Plate (Shrimp)', nameAr: 'طبق خاص (روبيان)', descEn: 'Fries, sauce, chips, shrimp, and drink.', descAr: 'بطاطا، صوص، شيبس، روبيان، ومشروب.', price: '9$', imageUrl: 'https://placehold.co/112x112/583707/FFF?text=SHRIMP' },
+            { id: 4, category: 'appetizers', nameEn: 'Special Plate (Hotdog)', nameAr: 'طبق خاص (هوت دوغ)', descEn: 'Fries, sauce, chips, hotdog, and drink.', descAr: 'بطاطا، صوص، شيبس، هوت دوغ، ومشروب.', price: '5$', imageUrl: 'https://placehold.co/112x112/583707/FFF?text=HOTDOG' },
+            { id: 5, category: 'appetizers', nameEn: 'Special Plate (Chicken)', nameAr: 'طبق خاص (دجاج)', descEn: 'Fries, sauce, chips, chicken, and drink.', descAr: 'بطاطا، صوص، شيبس، دجاج، ومشروب.', price: '7$', imageUrl: 'https://placehold.co/112x112/583707/FFF?text=CHICKEN' },
+
+            // Category: Sandwiches
+            { id: 6, category: 'sandwiches', nameEn: 'Chicken Charcoal (L)', nameAr: 'دجاج فحم (كبير)', descEn: 'Creamy garlic, special sauce, and pickles.', descAr: 'ثوم كريمي، صوص خاص، ومخلل.', price: '5$', imageUrl: 'https://placehold.co/112x112/754F00/FFF?text=WRAP' },
+            { id: 7, category: 'sandwiches', nameEn: 'Chicken Charcoal (M)', nameAr: 'دجاج فحم (وسط)', descEn: 'Creamy garlic, special sauce, and pickles.', descAr: 'ثوم كريمي، صوص خاص، ومخلل.', price: '3.8$', imageUrl: 'https://placehold.co/112x112/754F00/FFF?text=WRAP' },
+            { id: 8, category: 'sandwiches', nameEn: 'Tawouk Wrap', nameAr: 'سندويش طاووق', descEn: 'Creamy garlic, special sauce, pickles, and fries.', descAr: 'ثوم كريمي، صوص خاص، مخلل، وبطاطا.', price: '3.8$', imageUrl: 'https://placehold.co/112x112/754F00/FFF?text=TAWOUK' },
+
+            // Category: Burgers - Chicken
+            { id: 9, category: 'chicken-burgers', nameEn: 'Classic Chicken Burger', nameAr: 'برغر دجاج كلاسيك', descEn: 'Lettuce, tomato, pickles, onion, special sauce, cheddar, BBQ.', descAr: 'خس، بندورة، مخلل، بصل، صوص خاص، شيدر، باربكيو.', price: '4$', imageUrl: 'https://placehold.co/112x112/9B7D20/FFF?text=BURGER' },
+            { id: 10, category: 'chicken-burgers', nameEn: 'Mushroom Chicken Burger', nameAr: 'برغر دجاج بالفطر', descEn: 'Lettuce, special sauce, mushroom sauce, Emmental cheese.', descAr: 'خس، صوص خاص، صوص فطر، جبنة إيمنتال.', price: '6$', imageUrl: 'https://placehold.co/112x112/9B7D20/FFF?text=MUSHROOM' },
+            { id: 11, category: 'chicken-burgers', nameEn: 'BBQ Chicken Burger', nameAr: 'برغر دجاج باربكيو', descEn: 'Special sauce, lettuce, pickles, tomato, onion, cheddar, BBQ.', descAr: 'صوص خاص، خس، مخلل، بندورة، بصل، شيدر، باربكيو.', price: '5$', imageUrl: 'https://placehold.co/112x112/9B7D20/FFF?text=BBQ' },
+            { id: 12, category: 'chicken-burgers', nameEn: 'Hasan\'s Chicken Burger', nameAr: 'برغر دجاج مطبخ حسن', descEn: 'Special sauce, lettuce, pickles, onion rings, cheddar, BBQ, mozzarella patty.', descAr: 'صوص خاص، خس، مخلل، حلقات بصل، شيدر، باربكيو، باتي موتزاريلا.', price: '9$', imageUrl: 'https://placehold.co/112x112/9B7D20/FFF?text=SPECIAL' },
+            
+            // Category: Burgers - Beef
+            { id: 13, category: 'beef-burgers', nameEn: 'Classic Beef Burger', nameAr: 'برغر لحم كلاسيك', descEn: 'Lettuce, tomato, pickles, onion, special sauce, cheddar, BBQ.', descAr: 'خس، بندورة، مخلل، بصل، صوص خاص، شيدر، باربكيو.', price: '4$', imageUrl: 'https://placehold.co/112x112/8B4513/FFF?text=BURGER' },
+            { id: 14, category: 'beef-burgers', nameEn: 'Lebanese Beef Burger', nameAr: 'برغر لحم لبناني', descEn: 'Coleslaw, pickles, fries, ketchup.', descAr: 'كول سلو، مخلل، بطاطا، كاتشب.', price: '4$', imageUrl: 'https://placehold.co/112x112/8B4513/FFF?text=LEBANESE' },
+            { id: 15, category: 'beef-burgers', nameEn: 'BBQ Beef Burger', nameAr: 'برغر لحم باربكيو', descEn: 'Special sauce, lettuce, pickles, tomato, onion, cheddar, BBQ.', descAr: 'صوص خاص، خس، مخلل، بندورة، بصل، شيدر، باربكيو.', price: '5$', imageUrl: 'https://placehold.co/112x112/8B4513/FFF?text=BBQ' },
+            { id: 16, category: 'beef-burgers', nameEn: 'Hasan\'s Beef Burger', nameAr: 'برغر لحم مطبخ حسن', descEn: 'Lettuce, sauce, mozzarella patty, cheddar, BBQ, turkey, onion rings.', descAr: 'خس، صوص، باتي موتزاريلا، شيدر، باربكيو، تركي، حلقات بصل.', price: '6$', imageUrl: 'https://placehold.co/112x112/8B4513/FFF?text=SPECIAL' },
+            { id: 17, category: 'beef-burgers', nameEn: 'Monster Burger', nameAr: 'برغر مونستر', descEn: 'Double beef, lettuce, sauce, mozzarella patty, cheddar, BBQ, turkey, onion rings, chips.', descAr: 'لحم مضاعف، خس، صوص، باتي موتزاريلا، شيدر، باربكيو، تركي، حلقات بصل، شيبس.', price: '8$', imageUrl: 'https://placehold.co/112x112/8B4513/FFF?text=MONSTER' },
+
+            // Category: Plates
+            { id: 18, category: 'plates', nameEn: 'Chicken Plate X1', nameAr: 'طبق دجاج فحم $\\text{X1}$', descEn: '1 Chicken Sandwich, fries, pickles, creamy garlic, and a soft drink.', descAr: 'ساندويش دجاج واحد، بطاطا، مخلل، ثوم كريمي، ومشروب.', price: '6$', imageUrl: 'https://placehold.co/112x112/A95B00/FFF?text=PLATE' },
+            { id: 19, category: 'plates', nameEn: 'Chicken Plate X2', nameAr: 'طبق دجاج فحم $\\text{X2}$', descEn: '2 Chicken Sandwiches, fries, pickles, creamy garlic, and a soft drink.', descAr: 'ساندويشين دجاج، بطاطا، مخلل، ثوم كريمي، ومشروب.', price: '8$', imageUrl: 'https://placehold.co/112x112/A95B00/FFF?text=PLATE' },
+            { id: 20, category: 'plates', nameEn: 'Full Charcoal Chicken', nameAr: 'دجاج فحم كامل', descEn: 'Slow-cooked whole chicken on charcoal.', descAr: 'دجاج كامل مطبوخ ببطء على الفحم.', price: '12$', imageUrl: 'https://placehold.co/112x112/A95B00/FFF?text=CHICKEN' },
+            { id: 21, category: 'plates', nameEn: 'Half Charcoal Chicken', nameAr: 'نصف دجاج فحم', descEn: 'Half a slow-cooked chicken on charcoal.', descAr: 'نصف دجاج مطبوخ ببطء على الفحم.', price: '7$', imageUrl: 'https://placehold.co/112x112/A95B00/FFF?text=CHICKEN' },
+
+            // Category: Arabic - Warak Enab
+            { id: 22, category: 'warak-enab', nameEn: 'Vine Leaves (Veg.) - 1kg', nameAr: 'ورق عنب بالزيت - 1 كغ', descEn: 'Stuffed vine leaves cooked in oil (Vegetarian).', descAr: 'ورق عنب محشي مطبوخ بالزيت (نباتي).', price: '8$', imageUrl: 'https://placehold.co/112x112/7C3A00/FFF?text=WARAK' },
+            { id: 23, category: 'warak-enab', nameEn: 'Vine Leaves (Veg.) - 0.5kg', nameAr: 'ورق عنب بالزيت - 0.5 كغ', descEn: 'Stuffed vine leaves cooked in oil (Vegetarian).', descAr: 'ورق عنب محشي مطبوخ بالزيت (نباتي).', price: '5$', imageUrl: 'https://placehold.co/112x112/7C3A00/FFF?text=WARAK' },
+            { id: 24, category: 'warak-enab', nameEn: 'Vine Leaves (Meat) - 1kg', nameAr: 'ورق عنب باللحمة - 1 كغ', descEn: 'Stuffed vine leaves with meat.', descAr: 'ورق عنب محشي باللحمة.', price: '10$', imageUrl: 'https://placehold.co/112x112/7C3A00/FFF?text=WARAK' },
+            { id: 25, category: 'warak-enab', nameEn: 'Vine Leaves (Meat) - 0.5kg', nameAr: 'ورق عنب باللحمة - 0.5 كغ', descEn: 'Stuffed vine leaves with meat.', descAr: 'ورق عنب محشي باللحمة.', price: '6$', imageUrl: 'https://placehold.co/112x112/7C3A00/FFF?text=WARAK' },
+            { id: 26, category: 'warak-enab', nameEn: 'Cooked Vine Leaves (Veg.)', nameAr: 'ورق عنب بالزيت مطبوخ', descEn: 'Fully cooked stuffed vine leaves with oil.', descAr: 'ورق عنب محشي مطبوخ بالزيت جاهز للأكل.', price: '15$', imageUrl: 'https://placehold.co/112x112/7C3A00/FFF?text=COOKED' },
+            { id: 27, category: 'warak-enab', nameEn: 'Cooked Vine Leaves (Meat)', nameAr: 'ورق عنب باللحمة مطبوخ', descEn: 'Fully cooked stuffed vine leaves with meat.', descAr: 'ورق عنب محشي باللحمة جاهز للأكل.', price: '25$', imageUrl: 'https://placehold.co/112x112/7C3A00/FFF?text=COOKED' },
+
+            // Category: Arabic - Kebbeh & Pastries
+            { id: 28, category: 'kebbeh', nameEn: 'Kebbeh (Dozen)', nameAr: 'كبة (دزينة)', descEn: 'Traditional Middle Eastern meat croquettes.', descAr: 'كروكيت لحم تقليدي.', price: '6$', imageUrl: 'https://placehold.co/112x112/8B4513/FFF?text=KEBBEH' },
+            { id: 29, category: 'kebbeh', nameEn: 'Cheese Rolls (Dozen)', nameAr: 'رقاقات جبنة (دزينة)', descEn: 'Crispy rolls stuffed with cheese.', descAr: 'لفائف مقرمشة محشوة بالجبنة.', price: '4$', imageUrl: 'https://placehold.co/112x112/FFD700/FFF?text=CHEESE' },
+            { id: 30, category: 'kebbeh', nameEn: 'Meat Rolls (Dozen)', nameAr: 'رقاقات لحمة (دزينة)', descEn: 'Crispy rolls stuffed with seasoned meat.', descAr: 'لفائف مقرمشة محشوة باللحم المتبل.', price: '5$', imageUrl: 'https://placehold.co/112x112/8B4513/FFF?text=MEAT' },
+            { id: 31, category: 'kebbeh', nameEn: 'Vegetable Rolls (Dozen)', nameAr: 'رقاقات خضرة (دزينة)', descEn: 'Crispy rolls stuffed with mixed vegetables.', descAr: 'لفائف مقرمشة محشوة بالخضروات.', price: '4$', imageUrl: 'https://placehold.co/112x112/6B8E23/FFF?text=VEG' },
+            { id: 32, category: 'kebbeh', nameEn: 'Meat Sambousek', nameAr: 'سمبوسك لحمة', descEn: 'Pastry pockets filled with seasoned ground meat.', descAr: 'جيوب عجين محشوة باللحم المفروم.', price: '5$', imageUrl: 'https://placehold.co/112x112/8B4513/FFF?text=SAMBOUS' },
+            { id: 33, category: 'kebbeh', nameEn: 'Cheese Sambousek', nameAr: 'سمبوسك جبنة', descEn: 'Pastry pockets filled with cheese.', descAr: 'جيوب عجين محشوة بالجبنة.', price: '5$', imageUrl: 'https://placehold.co/112x112/FFD700/FFF?text=SAMBOUS' },
+            { id: 34, category: 'kebbeh', nameEn: 'Cheese & Sausage Rolls', nameAr: 'رقاقات جبنة و سجق', descEn: 'Crispy rolls stuffed with cheese and sausage.', descAr: 'لفائف مقرمشة محشوة بالجبنة والسجق.', price: '5$', imageUrl: 'https://placehold.co/112x112/B8860B/FFF?text=SAUSAGE' },
+            { id: 35, category: 'kebbeh', nameEn: 'Shish Barak', nameAr: 'شيش برك', descEn: 'Small meat dumplings in a yogurt sauce.', descAr: 'قطع عجين صغيرة محشوة باللحم في صوص لبن.', price: '2$', imageUrl: 'https://placehold.co/112x112/8B4513/FFF?text=BARAK' },
+
+            // Category: Desserts
+            { id: 36, category: 'desserts', nameEn: 'Lotus Cheesecake (Slice)', nameAr: 'تشيزكيك لوتس (قطعة)', descEn: 'Rich, creamy cheesecake with Lotus Biscoff.', descAr: 'تشيزكيك غني وكريمي مع بسكويت لوتس.', price: '2$', imageUrl: 'https://placehold.co/112x112/FFC0CB/FFF?text=CAKE' },
+            { id: 37, category: 'desserts', nameEn: 'Chocolate Cheesecake (Slice)', nameAr: 'تشيزكيك شوكولا (قطعة)', descEn: 'Rich, creamy cheesecake with chocolate.', descAr: 'تشيزكيك غني وكريمي بالشوكولاتة.', price: '2$', imageUrl: 'https://placehold.co/112x112/8B4513/FFF?text=CAKE' },
+            { id: 38, category: 'desserts', nameEn: 'Strawberry Cheesecake (Slice)', nameAr: 'تشيزكيك فراولة (قطعة)', descEn: 'Rich, creamy cheesecake with fresh strawberry.', descAr: 'تشيزكيك غني وكريمي بالفراولة.', price: '2$', imageUrl: 'https://placehold.co/112x112/FF6347/FFF?text=CAKE' },
+            { id: 39, category: 'desserts', nameEn: 'Whole Cheesecake', nameAr: 'تشيزكيك كامل', descEn: 'Full cake (pre-order required).', descAr: 'قالب كامل (يتطلب طلب مسبق).', price: '15$', imageUrl: 'https://placehold.co/112x112/FFC0CB/FFF?text=WHOLE' },
+            { id: 40, category: 'desserts', nameEn: 'Custard', nameAr: 'كستر', descEn: 'Smooth vanilla custard pudding.', descAr: 'بودينغ كاسترد فانيليا ناعم.', price: '0.6$', imageUrl: 'https://placehold.co/112x112/F0E68C/000?text=CUSTARD' },
+            { id: 41, category: 'desserts', nameEn: 'Jello', nameAr: 'جيلو', descEn: 'Classic gelatin dessert.', descAr: 'حلوى جيلاتين كلاسيكية.', price: '0.5$', imageUrl: 'https://placehold.co/112x112/90EE90/000?text=JELLO' },
+            { id: 42, category: 'desserts', nameEn: 'Rice Pudding', nameAr: 'رز بالحليب', descEn: 'Traditional rice pudding.', descAr: 'أرز باللبن التقليدي.', price: '0.6$', imageUrl: 'https://placehold.co/112x112/F5DEB3/000?text=RICE' },
+            { id: 43, category: 'desserts', nameEn: 'Muhallabia', nameAr: 'مهلبية', descEn: 'Traditional Middle Eastern milk pudding.', descAr: 'حلوى حليب شرق أوسطية تقليدية.', price: '0.6$', imageUrl: 'https://placehold.co/112x112/E0FFFF/000?text=MILK' },
+        ];
+        
+        // --- Helper Functions ---
+
+        /**
+         * Generates the HTML for a single menu item card using the high-visibility, picture-left layout.
+         */
+        function createItemCard(item) {
+            // Formula for price rendering: \text{Price}
+            const formattedPrice = item.price.replace('$', '\\text{\$}$');
+
+            return `
+                <div class="bg-gray-800 p-4 rounded-xl shadow-2xl flex flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-4 transition transform hover:scale-[1.01] duration-300">
+                    <!-- Item Image (Large, Picture to the Left) -->
+                    <img src="${item.imageUrl}" alt="${item.nameEn} - ${item.nameAr}" 
+                        class="w-24 h-24 sm:w-28 sm:h-28 rounded-xl object-cover flex-shrink-0" 
+                        onerror="this.onerror=null; this.src='https://placehold.co/112x112/374151/FFF?text=FOOD'">
+                    
+                    <!-- Text Content -->
+                    <div class="flex-grow min-w-0">
+                        <p class="text-xl font-bold text-amber-400 truncate">${item.nameEn}</p>
+                        <p class="text-lg font-bold text-gray-200 text-right truncate">${item.nameAr}</p>
+                        <!-- Description (Always Visible for high visibility/detail) -->
+                        <p class="text-sm text-gray-400 mt-1">${item.descEn}</p>
+                        <p class="text-sm text-gray-400 mt-1 text-right">${item.descAr}</p>
+                    </div>
+                    
+                    <!-- Price (Always Large and well-placed) -->
+                    <div class="flex-shrink-0 sm:mt-4">
+                        <p class="text-3xl font-extrabold text-amber-500">${item.price}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- View Rendering Logic (Same as before) ---
+        
+        const categoryMap = {
+            'appetizers': { en: 'Appetizers', ar: 'المقبلات', containerId: 'appetizers-container' },
+            'sandwiches': { en: 'Sandwiches & Wraps', ar: 'سندويشات و لفائف', containerId: 'sandwiches-container' },
+            'chicken-burgers': { en: 'Chicken Burgers', ar: 'برغر الدجاج', containerId: 'chicken-burgers-container' },
+            'beef-burgers': { en: 'Beef Burgers', ar: 'برغر اللحم', containerId: 'beef-burgers-container' },
+            'plates': { en: 'Plates & Grills', ar: 'أطباق و مشاوي', containerId: 'plates-container' },
+            'warak-enab': { en: 'Warak Enab (Vine Leaves)', ar: 'ورق عنب', containerId: 'warak-enab-container' },
+            'kebbeh': { en: 'Kebbeh & Pastries', ar: 'كبب و رقاقات', containerId: 'kebbeh-container' },
+            'desserts': { en: 'Desserts', ar: 'حلويات', containerId: 'desserts-container' },
+        };
+
+        const mainCategorySections = {
+            'appetizers': { title: 'Appetizers | المقبلات', id: 'appetizers' },
+            'sandwiches': { title: 'Sandwiches & Wraps | سندويشات و لفائف', id: 'sandwiches' },
+            'burgers': { title: 'Gourmet Burgers | برغر فاخر', id: 'burgers' },
+            'plates': { title: 'Plates & Grills | أطباق و مشاوي', id: 'plates' },
+            'arabic': { title: 'Arabic Specialties | أصناف عربية', id: 'arabic' },
+            'desserts': { title: 'Desserts | حلويات', id: 'desserts' },
+        };
+
+        function renderMenu() {
+            const menuContent = document.getElementById('menu-content');
+            menuContent.innerHTML = ''; // Clear previous content
+
+            let html = '';
+            
+            // Group items by their container category
+            const groupedItems = menuData.reduce((acc, item) => {
+                const key = item.category;
+                if (!acc[key]) acc[key] = [];
+                acc[key].push(item);
+                return acc;
+            }, {});
+
+            // Loop through main sections and build HTML
+            for (const sectionKey in mainCategorySections) {
+                const section = mainCategorySections[sectionKey];
+                
+                // Start of the main category section
+                html += `<div id="${section.id}" class="category-section">`;
+                html += `<h2 class="text-4xl font-bold text-amber-400 mb-6 border-b-4 border-amber-600 pb-2">${section.title}</h2>`;
+
+                // Handle sub-categories (like Burgers, Arabic)
+                const isBurgerSection = sectionKey === 'burgers';
+                const isArabicSection = sectionKey === 'arabic';
+
+                let subCategories = [];
+                if (isBurgerSection) {
+                    subCategories = ['chicken-burgers', 'beef-burgers'];
+                } else if (isArabicSection) {
+                    subCategories = ['warak-enab', 'kebbeh'];
+                } else {
+                    // Single category section
+                    subCategories = [sectionKey];
+                }
+
+                subCategories.forEach(catKey => {
+                    const category = categoryMap[catKey];
+                    const items = groupedItems[catKey] || [];
+                    if (items.length === 0) return; // Skip if no items
+
+                    // Add sub-heading for complex sections
+                    if (isBurgerSection || isArabicSection) {
+                        html += `<h3 class="text-2xl font-semibold text-gray-300 mb-4 mt-8">${category.en} | ${category.ar}</h3>`;
+                    }
+
+                    // Determine container classes based on view mode:
+                    const containerClasses = currentView === 'grid' 
+                        ? 'grid grid-cols-1 sm:grid-cols-2 gap-6' 
+                        : 'grid grid-cols-1 gap-6';
+                        
+                    // Item list container
+                    html += `<div class="${containerClasses}" id="${category.containerId}">`;
+                    items.forEach(item => {
+                        html += createItemCard(item);
+                    });
+                    html += `</div>`;
+                });
+
+
+                // Add special Mansaf note block if it's the Arabic section
+                if (isArabicSection) {
+                    html += `
+                        <h3 class="text-2xl font-semibold text-gray-300 mb-4 mt-8">Mansaf (Meat or Chicken) | مناسف لحمة أو دجاج</h3>
+                        <div class="bg-gray-700 p-4 rounded-lg shadow-xl">
+                            <p class="text-xl font-semibold text-white">Available Mansaf Types: | أنواع المناسف المتوفرة:</p>
+                            <ul class="list-disc list-inside text-gray-300 ml-4 mt-2 space-y-1">
+                                <li>Oriental Rice (رز شرقي)</li>
+                                <li>Kabsa (كبسة)</li>
+                                <li>Mandi (مندي)</li>
+                                <li>Biryani (برياني)</li>
+                            </ul>
+                            <div class="bg-gray-800 p-3 mt-4 rounded-md text-center text-sm font-medium">
+                                <span class="text-amber-300 font-bold">Pricing Note:</span> Mansaf dishes are priced according to the number of people/portion size. Please inquire with staff. <br> <span class="text-amber-300 font-bold">ملاحظة التسعير:</span> تسعر أطباق المناسف حسب عدد الأشخاص/حجم الحصة. يرجى الاستفسار من الموظفين.
+                            </div>
+                        </div>
+                    `;
+                }
+
+                html += `</div>`; // End of the main category section
+            }
+            
+            menuContent.innerHTML = html;
+        }
+
+        /**
+         * Toggles the view mode and re-renders the menu.
+         */
+        function toggleView(view) {
+            currentView = view;
+            
+            // Update button styles
+            const gridBtn = document.getElementById('grid-view-btn');
+            const listBtn = document.getElementById('list-view-btn');
+            
+            if (view === 'grid') {
+                gridBtn.classList.add('active', 'bg-amber-600', 'text-white');
+                gridBtn.classList.remove('bg-gray-700', 'text-gray-300');
+                listBtn.classList.remove('active', 'bg-amber-600', 'text-white');
+                listBtn.classList.add('bg-gray-700', 'text-gray-300');
+            } else {
+                listBtn.classList.add('active', 'bg-amber-600', 'text-white');
+                listBtn.classList.remove('bg-gray-700', 'text-gray-300');
+                gridBtn.classList.remove('active', 'bg-amber-600', 'text-white');
+                gridBtn.classList.add('bg-gray-700', 'text-gray-300');
+            }
+
+            // Re-render the menu content
+            renderMenu();
+        }
+
+        // --- Initialization ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Render Initial View (Grid)
+            renderMenu();
+        });
+    </script>
+</body>
+</html>
