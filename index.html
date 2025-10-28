@@ -39,178 +39,113 @@
             top: 0;
             left: 0;
             right: 0;
-            z-index: 50;
+            z-index: 50; /* Ensure it stays on top */
+            background-color: #1f2937; /* Slightly lighter dark background for contrast */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        /* Compact Navigation Bar: Always a horizontal scrolling list */
-        #sidebar-nav {
-            overflow-x: auto; /* Allows horizontal scrolling */
-            white-space: nowrap; /* Prevents wrapping */
-            border-bottom: 2px solid #fcd34d; /* Gold border separates it from content */
-            padding: 6px 16px; /* Reduced vertical padding */
-        }
-        #sidebar-nav ul {
-            display: flex; 
-            justify-content: center; 
-            max-width: 7xl;
-            margin: 0 auto; 
-            padding: 0;
-            list-style: none; 
-            width: fit-content; 
-        }
-        #sidebar-nav a {
-            display: inline-block;
-            padding: 4px 10px; /* Further reduced button size */
-            margin-right: 6px;
-            font-size: 0.8rem; /* text-xs */
-            flex-shrink: 0; 
+        #nav-bar {
+            background-color: #111827;
+            padding: 8px 0;
+            border-top: 1px solid #374151;
+            /* Hide the scrollbar without hiding the content (webkit specific) */
+            overflow-x: auto;
+            white-space: nowrap;
         }
 
-        /* Desktop Adjustment: Increased body padding for larger header */
-        @media (min-width: 1024px) {
-            body {
-                padding-top: 135px; /* Slightly less padding on larger screens */
+        /* --- Animation for Cards --- */
+        @keyframes slide-in-right {
+            from {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
             }
         }
-        
-        /* Custom Styles for View Toggle Icons (using inline SVG paths) */
-        .view-icon {
-            width: 20px; /* Slightly smaller icons */
-            height: 20px;
-            transition: all 0.2s;
-        }
-        .view-button.active {
-            background-color: #b45309; 
-            color: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-        }
 
-        /* Header layout */
-        .header-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-        }
-        
-        /* Logo positioning - absolutely positioned on the left */
-        .header-logo {
-            position: absolute;
-            left: -2%;
-            top: 70%;
-            transform: translateY(-50%);
-            z-index: 10;
-        }
-        
-        /* Center content - title and subtitle */
-        .header-center {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 0 5rem; /* Add padding to prevent overlap with logo */
-        }
-        
-        /* View toggle positioning */
-        .header-controls {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
+        .slide-in {
+            animation: slide-in-right 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            opacity: 0; /* Start invisible */
         }
     </style>
 </head>
-<body class="font-sans antialiased">
+<body class="font-sans">
 
-    <!-- Fixed Header and Navigation Section -->
-    <div id="fixed-header" class="bg-gray-900 shadow-xl">
-        <!-- Main Header/Title and View Toggle -->
-        <header class="py-4 px-4 max-w-7xl mx-auto relative header-container">
+    <!-- Fixed Header Container -->
+    <header id="fixed-header">
+        
+        <!-- Header Content - Centered Text & Increased Width -->
+        <div id="header-content" class="max-w-6xl mx-auto w-full flex items-center justify-between p-4">
             
-            <!-- Large Logo on the Left (Absolutely Positioned) -->
-            <div class="header-logo">
-                <img src="src/Logo.png" alt="Hasan's Kitchen Logo" class="object-contain" width="150" height="150">
-            </div>
-            
-            <!-- Centered Title and Subtitle -->
-            <div class="header-center">
-                <!-- Large centered title -->
-                <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-widest text-amber-400 uppercase">
-                    Hasan's Kitchen
-                </h1>
-                <!-- Centered subtitle -->
-                <p class="text-gray-400 text-base sm:text-lg italic mt-1">
-                    Every Bite Tells a Story - كل لقمة تحكي قصة
-                </p>
-            </div>
-            
-            <!-- View Toggle Controls (Right Side) -->
-            <div class="header-controls">
-                <div class="flex space-x-2">
-                    <button id="grid-view-btn" onclick="toggleView('grid')" class="view-button active bg-amber-600 text-white p-1.5 rounded-lg shadow-md hover:bg-amber-700 transition duration-150" aria-label="Grid View">
-                        <!-- Grid Icon SVG -->
-                        <svg class="view-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M4 4h7v7H4V4zM4 13h7v7H4v-7zM13 4h7v7h-7V4zM13 13h7v7h-7v-7z"/>
-                        </svg>
+            <!-- Logo, Restaurant Info, and View Toggles Group -->
+            <div class="flex items-center w-full">
+                
+                <!-- Image/Logo - fixed size left -->
+                <img src="https://placehold.co/80x80/fcd34d/111827?text=Logo" 
+                     alt="Restaurant Logo" 
+                     class="h-16 w-16 rounded-full object-cover flex-shrink-0 shadow-lg">
+
+                <!-- Restaurant Info - takes all available space and centers text -->
+                <div id="restaurant-info" class="flex flex-col flex-grow text-center px-4">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-amber-500 font-serif">Hasan's Kitchen</h1>
+                    <p class="text-sm sm:text-base text-gray-300 italic mt-1">Authentic Middle Eastern Cuisine</p>
+                </div>
+
+                <!-- View Toggles - fixed size right -->
+                <div id="view-toggles" class="flex space-x-2 flex-shrink-0">
+                    <button id="grid-view-btn" onclick="toggleView('grid')" class="active bg-amber-600 text-white p-3 rounded-full text-lg transition duration-200 hover:bg-amber-700 shadow-md" aria-label="Grid View">
+                        <!-- Icon for Grid View (lucide-react icon equivalent) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-grid"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
                     </button>
-                    <button id="list-view-btn" onclick="toggleView('list')" class="view-button bg-gray-700 text-gray-300 p-1.5 rounded-lg shadow-md hover:bg-gray-600 transition duration-150" aria-label="List View">
-                        <!-- List Icon SVG -->
-                        <svg class="view-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
-                        </svg>
+                    <button id="list-view-btn" onclick="toggleView('list')" class="bg-gray-700 text-gray-300 p-3 rounded-full text-lg transition duration-200 hover:bg-gray-600 shadow-md" aria-label="List View">
+                        <!-- Icon for List View (lucide-react icon equivalent) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
                     </button>
                 </div>
+
             </div>
-        </header>
-
-        <!-- Fixed Navigation Buttons (Always compact and horizontally scrollable) -->
-        <nav id="sidebar-nav" class="bg-gray-800 lg:bg-gray-900">
-            <ul class="space-x-2">
-                <li><a href="#appetizers" class="rounded-full text-gray-300 hover:bg-amber-700 hover:text-white transition duration-200">Appetizers | مقبلات</a></li>
-                <li><a href="#sandwiches" class="rounded-full text-gray-300 hover:bg-amber-700 hover:text-white transition duration-200">Sandwiches | سندويشات</a></li>
-                <li><a href="#burgers" class="rounded-full text-gray-300 hover:bg-amber-700 hover:text-white transition duration-200">Burgers | برغر</a></li>
-                <li><a href="#plates" class="rounded-full text-gray-300 hover:bg-amber-700 hover:text-white transition duration-200">Plates | أطباق</a></li>
-                <li><a href="#arabic" class="rounded-full text-gray-300 hover:bg-amber-700 hover:text-white transition duration-200">Arabic Specialties | أصناف عربية</a></li>
-                <li><a href="#desserts" class="rounded-full text-gray-300 hover:bg-amber-700 hover:text-white transition duration-200">Desserts | حلويات</a></li>
-            </ul>
-        </nav>
-    </div>
-
-    <!-- Main Content -->
-    <main class="max-w-4xl mx-auto p-4 lg:p-8">
-
-        <!-- Menu Items Content Container -->
-        <section class="space-y-12" id="menu-content">
-            <!-- Content will be rendered here by JavaScript -->
-        </section>
-
-    </main>
-    
-    <!-- Footer/Contact Section -->
-    <footer class="bg-gray-900 mt-10 p-6 text-center text-gray-500">
-        <div class="flex justify-center mb-3">
-            <svg class="w-12 h-12 text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18 10H6c-1.1 0-2 .9-2 2v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3c0-1.1-.9-2-2-2z"/>
-                <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 6h6"/>
-                <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10.5 3h3"/>
-            </svg>
         </div>
-        <p class="text-lg font-semibold text-white mb-2">Hasan's Kitchen | مطبخ حسن</p>
-        <p class="text-amber-400 mb-2">Contact for Wholesale & Special Occasion Orders: | للتواصل لطلبات الجملة والمناسبات الخاصة:</p>
-        <p class="text-white text-xl font-mono tracking-wider">71-200583 / 71-200583</p>
-        <p class="text-sm mt-4">Thank you for dining with us. | شكراً لزيارتكم.</p>
+
+        <!-- Navigation Bar -->
+        <nav id="nav-bar">
+            <!-- Navigation links will be populated by JavaScript -->
+        </nav>
+    </header>
+
+    <!-- Main Content Area - Increased Width -->
+    <main id="content-area" class="max-w-6xl mx-auto p-4 md:p-8">
+        <div id="menu-content">
+            <!-- Menu items will be rendered here by JavaScript -->
+        </div>
+    </main>
+
+    <!-- === ADDED FOOTER SECTION === -->
+    <footer class="bg-gray-900 mt-10 py-8 text-center text-gray-400 border-t-2 border-amber-600">
+        <div class="max-w-6xl mx-auto px-4">
+            <h3 class="text-2xl font-bold text-amber-500 font-serif">Hasan's Kitchen | مطبخ حسن</h3>
+            <p class="mt-4 text-lg">
+                Contact for Wholesale & Special Occasion Orders: | للتواصل لطلبات الجملة والمناسبات الخاصة:
+            </p>
+            <p class="text-2xl font-mono text-white tracking-wider my-2">
+                71-200583 / 71-200583
+            </p>
+            <p class="text-sm mt-4 text-gray-500">
+                Thank you for dining with us. | شكراً لزيارتكم.
+            </p>
+        </div>
     </footer>
+    <!-- === END OF FOOTER === -->
 
-    <!-- Script Block for Logic and Rendering -->
     <script>
-        let currentView = 'grid'; // Default view state
+        
+        let currentView = 'grid'; // Default view mode
 
-        // --- Data Definitions (Same as before) ---
-
-        const menuData = [
+        // Define the raw data structure
+        const rawMenuData = [
             // Category: Appetizers
-            { id: 1, category: 'appetizers', nameEn: 'Fries & Cheddar', nameAr: 'بطاطا وجبنة شيدر', descEn: 'Fries, cheddar, BBQ, and Mejo-chips.', descAr: 'بطاطا، شيدر، باربكيو، وشيبس ميجو.', price: '4$', imageUrl: 'https://placehold.co/112x112/583707/FFF?text=FRIES' },
+            { id: 1, category: 'appetizers', nameEn: 'Fries & Cheddar', nameAr: 'بطاطا وجبنة شيدر', descEn: 'Fries, cheddar, BBQ, and Mejo-chips.', descAr: 'بطاطا، شيدر، باربكيو، وشيبس ميجو.', price: '4$', imageUrl: 'https://www.thecookierookie.com/wp-content/uploads/2023/01/featured-cheese-fries-recipe.jpg' },
             { id: 2, category: 'appetizers', nameEn: 'Classic Fries Plate', nameAr: 'طبق بطاطا كلاسيكي', descEn: 'Classic crispy fries.', descAr: 'بطاطا مقلية كلاسيكية.', price: '3.5$', imageUrl: 'https://placehold.co/112x112/583707/FFF?text=FRIES' },
             { id: 3, category: 'appetizers', nameEn: 'Special Plate (Shrimp)', nameAr: 'طبق خاص (روبيان)', descEn: 'Fries, sauce, chips, shrimp, and drink.', descAr: 'بطاطا، صوص، شيبس، روبيان، ومشروب.', price: '9$', imageUrl: 'https://placehold.co/112x112/583707/FFF?text=SHRIMP' },
             { id: 4, category: 'appetizers', nameEn: 'Special Plate (Hotdog)', nameAr: 'طبق خاص (هوت دوغ)', descEn: 'Fries, sauce, chips, hotdog, and drink.', descAr: 'بطاطا، صوص، شيبس، هوت دوغ، ومشروب.', price: '5$', imageUrl: 'https://placehold.co/112x112/583707/FFF?text=HOTDOG' },
@@ -267,130 +202,160 @@
             { id: 41, category: 'desserts', nameEn: 'Jello', nameAr: 'جيلو', descEn: 'Classic gelatin dessert.', descAr: 'حلوى جيلاتين كلاسيكية.', price: '0.5$', imageUrl: 'https://placehold.co/112x112/90EE90/000?text=JELLO' },
             { id: 42, category: 'desserts', nameEn: 'Rice Pudding', nameAr: 'رز بالحليب', descEn: 'Traditional rice pudding.', descAr: 'أرز باللبن التقليدي.', price: '0.6$', imageUrl: 'https://placehold.co/112x112/F5DEB3/000?text=RICE' },
             { id: 43, category: 'desserts', nameEn: 'Muhallabia', nameAr: 'مهلبية', descEn: 'Traditional Middle Eastern milk pudding.', descAr: 'حلوى حليب شرق أوسطية تقليدية.', price: '0.6$', imageUrl: 'https://placehold.co/112x112/E0FFFF/000?text=MILK' },
+            // Note: Drinks category was not provided in the new data, so it is omitted.
         ];
-        
-        // --- Helper Functions ---
 
-        /**
-         * Generates the HTML for a single menu item card using the high-visibility, picture-left layout.
-         */
-        function createItemCard(item) {
-            // Formula for price rendering: \text{Price}
-            const formattedPrice = item.price.replace('$', '\\text{\$}$');
+        // Function to transform the flat list into a categorized map
+        function categorizeMenuData(data) {
+            const categories = {};
+            data.forEach(item => {
+                const categoryKey = item.category;
+                if (!categories[categoryKey]) {
+                    // Title mapping based on the category key
+                    let categoryTitleEn = categoryKey.charAt(0).toUpperCase() + categoryKey.slice(1).replace('-', ' ');
+                    let categoryTitleAr = 'فئة غير معرفة';
+                    switch (categoryKey) {
+                        case 'appetizers': categoryTitleAr = 'المقبلات'; break;
+                        case 'sandwiches': categoryTitleAr = 'السندويشات'; break;
+                        case 'chicken-burgers': categoryTitleAr = 'برغر الدجاج'; break;
+                        case 'beef-burgers': categoryTitleAr = 'برغر اللحم'; break;
+                        case 'plates': categoryTitleAr = 'الأطباق الرئيسية'; break;
+                        case 'warak-enab': categoryTitleAr = 'ورق عنب'; break;
+                        case 'kebbeh': categoryTitleAr = 'كبة ومعجنات'; break;
+                        case 'desserts': categoryTitleAr = 'الحلويات'; break;
+                        // Add more mappings if needed
+                    }
+                    
+                    categories[categoryKey] = {
+                        category: categoryTitleEn,
+                        categoryAr: categoryTitleAr,
+                        id: categoryKey,
+                        items: []
+                    };
+                }
+                categories[categoryKey].items.push(item);
+            });
 
-            return `
-                <div class="bg-gray-800 p-4 rounded-xl shadow-2xl flex flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-4 transition transform hover:scale-[1.01] duration-300">
-                    <!-- Item Image (Large, Picture to the Left) -->
-                    <img src="${item.imageUrl}" alt="${item.nameEn} - ${item.nameAr}" 
-                        class="w-24 h-24 sm:w-28 sm:h-28 rounded-xl object-cover flex-shrink-0" 
-                        onerror="this.onerror=null; this.src='https://placehold.co/112x112/374151/FFF?text=FOOD'">
-                    
-                    <!-- Text Content -->
-                    <div class="flex-grow min-w-0">
-                        <p class="text-xl font-bold text-amber-400 truncate">${item.nameEn}</p>
-                        <p class="text-lg font-bold text-gray-200 text-right truncate">${item.nameAr}</p>
-                        <!-- Description (Always Visible for high visibility/detail) -->
-                        <p class="text-sm text-gray-400 mt-1">${item.descEn}</p>
-                        <p class="text-sm text-gray-400 mt-1 text-right">${item.descAr}</p>
-                    </div>
-                    
-                    <!-- Price (Always Large and well-placed) -->
-                    <div class="flex-shrink-0 sm:mt-4">
-                        <p class="text-3xl font-extrabold text-amber-500">${item.price}</p>
-                    </div>
-                </div>
-            `;
+            // Convert map back to an ordered array
+            return Object.values(categories);
         }
 
-        // --- View Rendering Logic (Same as before) ---
-        
-        const categoryMap = {
-            'appetizers': { en: 'Appetizers', ar: 'المقبلات', containerId: 'appetizers-container' },
-            'sandwiches': { en: 'Sandwiches & Wraps', ar: 'سندويشات و لفائف', containerId: 'sandwiches-container' },
-            'chicken-burgers': { en: 'Chicken Burgers', ar: 'برغر الدجاج', containerId: 'chicken-burgers-container' },
-            'beef-burgers': { en: 'Beef Burgers', ar: 'برغر اللحم', containerId: 'beef-burgers-container' },
-            'plates': { en: 'Plates & Grills', ar: 'أطباق و مشاوي', containerId: 'plates-container' },
-            'warak-enab': { en: 'Warak Enab (Vine Leaves)', ar: 'ورق عنب', containerId: 'warak-enab-container' },
-            'kebbeh': { en: 'Kebbeh & Pastries', ar: 'كبب و رقاقات', containerId: 'kebbeh-container' },
-            'desserts': { en: 'Desserts', ar: 'حلويات', containerId: 'desserts-container' },
-        };
+        const menuData = categorizeMenuData(rawMenuData);
 
-        const mainCategorySections = {
-            'appetizers': { title: 'Appetizers | المقبلات', id: 'appetizers' },
-            'sandwiches': { title: 'Sandwiches & Wraps | سندويشات و لفائف', id: 'sandwiches' },
-            'burgers': { title: 'Gourmet Burgers | برغر فاخر', id: 'burgers' },
-            'plates': { title: 'Plates & Grills | أطباق و مشاوي', id: 'plates' },
-            'arabic': { title: 'Arabic Specialties | أصناف عربية', id: 'arabic' },
-            'desserts': { title: 'Desserts | حلويات', id: 'desserts' },
-        };
+        // --- REMOVED Firebase/Authentication Setup ---
 
+        // --- Menu Rendering Functions ---
+
+        /**
+         * Renders the category navigation links.
+         */
+        function renderNavigation() {
+            const navBar = document.getElementById('nav-bar');
+            let navHtml = `<div class="flex space-x-4 px-4 max-w-6xl mx-auto">`;
+
+            menuData.forEach(category => {
+                navHtml += `
+                    <a href="#${category.id}" 
+                       class="text-gray-300 hover:text-amber-400 p-2 rounded-lg text-sm font-medium transition duration-150 flex-shrink-0"
+                       aria-label="Go to ${category.category}">
+                        <span class="text-right inline-block ml-2">${category.categoryAr}</span> / <span>${category.category}</span>
+                    </a>
+                `;
+            });
+
+            navHtml += `</div>`;
+            navBar.innerHTML = navHtml;
+        }
+
+        /**
+         * Renders the full menu content based on the current view mode.
+         */
         function renderMenu() {
             const menuContent = document.getElementById('menu-content');
-            menuContent.innerHTML = ''; // Clear previous content
-
             let html = '';
-            
-            // Group items by their container category
-            const groupedItems = menuData.reduce((acc, item) => {
-                const key = item.category;
-                if (!acc[key]) acc[key] = [];
-                acc[key].push(item);
-                return acc;
-            }, {});
+            let itemIndex = 0; // Index for staggered animation delay
 
-            // Loop through main sections and build HTML
-            for (const sectionKey in mainCategorySections) {
-                const section = mainCategorySections[sectionKey];
-                
-                // Start of the main category section
-                html += `<div id="${section.id}" class="category-section">`;
-                html += `<h2 class="text-4xl font-bold text-amber-400 mb-6 border-b-4 border-amber-600 pb-2">${section.title}</h2>`;
+            menuData.forEach(categoryData => {
+                // Category Header (Displaying both Arabic and English names)
+                html += `
+                    <h2 id="${categoryData.id}" 
+                        class="text-4xl font-bold text-amber-500 mt-12 mb-6 pt-4 border-b border-amber-500/50 flex justify-between items-center">
+                        <span dir="rtl">${categoryData.categoryAr}</span>
+                        <span class="text-3xl text-gray-400 font-normal hidden sm:inline-block">(${categoryData.category})</span>
+                    </h2>
+                `;
 
-                // Handle sub-categories (like Burgers, Arabic)
-                const isBurgerSection = sectionKey === 'burgers';
-                const isArabicSection = sectionKey === 'arabic';
+                // Item Container (Grid or List layout)
+                const layoutClasses = currentView === 'grid' 
+                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
+                    : 'space-y-4';
 
-                let subCategories = [];
-                if (isBurgerSection) {
-                    subCategories = ['chicken-burgers', 'beef-burgers'];
-                } else if (isArabicSection) {
-                    subCategories = ['warak-enab', 'kebbeh'];
-                } else {
-                    // Single category section
-                    subCategories = [sectionKey];
-                }
+                html += `<div class="${layoutClasses}">`;
 
-                subCategories.forEach(catKey => {
-                    const category = categoryMap[catKey];
-                    const items = groupedItems[catKey] || [];
-                    if (items.length === 0) return; // Skip if no items
+                categoryData.items.forEach(itemData => {
+                    // === FIX: RE-INSERTED MISSING CARD HTML ===
+                    
+                    // Calculate delay for staggered animation (New)
+                    const delay = (itemIndex * 0.05).toFixed(2); // 50ms delay per item
 
-                    // Add sub-heading for complex sections
-                    if (isBurgerSection || isArabicSection) {
-                        html += `<h3 class="text-2xl font-semibold text-gray-300 mb-4 mt-8">${category.en} | ${category.ar}</h3>`;
+                    if (currentView === 'list') {
+                        // List View Card
+                        html += `
+                            <div class="slide-in bg-gray-800 p-4 rounded-xl shadow-xl transition duration-300 hover:shadow-amber-500/30 hover:bg-gray-700/50 flex items-start space-x-4" 
+                                 style="animation-delay: ${delay}s;">
+                                <img src="${itemData.imageUrl}" 
+                                     alt="${itemData.nameEn}" 
+                                     class="h-20 w-20 rounded-lg object-cover flex-shrink-0 border-2 border-amber-500/50"
+                                     onerror="this.onerror=null; this.src='https://placehold.co/80x80/6b7280/f9fafb?text=Item'">
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <div class="flex flex-col">
+                                            <h3 class="text-xl font-semibold text-amber-300">${itemData.nameEn}</h3>
+                                            <h3 class="text-lg font-medium text-gray-200" dir="rtl">${itemData.nameAr}</h3>
+                                        </div>
+                                        <span class="text-2xl font-bold text-amber-500 flex-shrink-0 ml-4">${itemData.price}</span>
+                                    </div>
+                                    <p class="text-gray-400 text-sm">${itemData.descEn}</p>
+                                    <p class="text-gray-400 text-sm" dir="rtl">${itemData.descAr}</p>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Grid View Card
+                        html += `
+                            <div class="slide-in bg-gray-800 p-4 rounded-xl shadow-xl transition duration-300 hover:shadow-amber-500/30 hover:bg-gray-700/50 flex flex-col items-start"
+                                 style="animation-delay: ${delay}s;">
+                                <img src="${itemData.imageUrl}" 
+                                     alt="${itemData.nameEn}" 
+                                     class="w-full h-40 object-cover rounded-lg mb-4 border-2 border-amber-500/50"
+                                     onerror="this.onerror=null; this.src='https://placehold.co/300x160/6b7280/f9fafb?text=Item'">
+                                <div class="w-full mb-2">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <h3 class="text-xl font-semibold text-amber-300">${itemData.nameEn}</h3>
+                                        <span class="text-2xl font-bold text-amber-500">${itemData.price}</span>
+                                    </div>
+                                    <h3 class="text-lg font-medium text-gray-200" dir="rtl">${itemData.nameAr}</h3>
+                                </div>
+                                <p class="text-gray-400 text-sm">${itemData.descEn}</p>
+                                <p class="text-gray-400 text-sm" dir="rtl">${itemData.descAr}</p>
+                            </div>
+                        `;
                     }
+                    // === END OF FIX ===
 
-                    // Determine container classes based on view mode:
-                    const containerClasses = currentView === 'grid' 
-                        ? 'grid grid-cols-1 sm:grid-cols-2 gap-6' 
-                        : 'grid grid-cols-1 gap-6';
-                        
-                    // Item list container
-                    html += `<div class="${containerClasses}" id="${category.containerId}">`;
-                    items.forEach(item => {
-                        html += createItemCard(item);
-                    });
-                    html += `</div>`;
+                    itemIndex++; // Increment index for the stagger effect
                 });
+                
+                html += `</div>`; // End of the main category section (the item container)
 
-
-                // Add special Mansaf note block if it's the Arabic section
-                if (isArabicSection) {
+                // --- ADDED MANSAT BLOCK ---
+                // If this is the 'kebbeh' category (last one before desserts), add the special Mansaf note.
+                if (categoryData.id === 'kebbeh') {
                     html += `
                         <h3 class="text-2xl font-semibold text-gray-300 mb-4 mt-8">Mansaf (Meat or Chicken) | مناسف لحمة أو دجاج</h3>
                         <div class="bg-gray-700 p-4 rounded-lg shadow-xl">
                             <p class="text-xl font-semibold text-white">Available Mansaf Types: | أنواع المناسف المتوفرة:</p>
-                            <ul class="list-disc list-inside text-gray-300 ml-4 mt-2 space-y-1">
+                            <ul class="list-disc list-inside text-gray-300 ml-4 mt-2 space-y-1" dir="auto">
                                 <li>Oriental Rice (رز شرقي)</li>
                                 <li>Kabsa (كبسة)</li>
                                 <li>Mandi (مندي)</li>
@@ -402,9 +367,9 @@
                         </div>
                     `;
                 }
+                // --- END OF ADDED BLOCK ---
 
-                html += `</div>`; // End of the main category section
-            }
+            });
             
             menuContent.innerHTML = html;
         }
@@ -435,12 +400,13 @@
             renderMenu();
         }
 
-        // --- Initialization ---
-
+        // Initialize and render the menu on load (no Firebase)
         document.addEventListener('DOMContentLoaded', () => {
-            // Render Initial View (Grid)
+            renderNavigation();
             renderMenu();
         });
     </script>
 </body>
 </html>
+
+
